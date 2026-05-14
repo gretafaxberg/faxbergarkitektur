@@ -36,14 +36,21 @@ body {
 }
 
 .letter {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:var(--blue);
-  font-size:12px;
-  transform: translate(calc(var(--cell) * -0.5), calc(var(--cell) * -0.5));
-  text-decoration:none;
-  z-index:10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #0000FF;
+  font-size: 12px;
+  text-decoration: none;
+
+  width: 100%;
+  height: 100%;
+
+  justify-self: stretch;
+  align-self: stretch;
+
+  transform: none;
 }
 
 .tile, .static-tile {
