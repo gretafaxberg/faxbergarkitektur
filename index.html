@@ -1,303 +1,209 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faxberg Arkitektur</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>faxberg arkitektur</title>
 <style>
-:root{
-    --red:#ff073a;
-    --cell:38px;
+:root {
+  --red: #ff073a;
+  --blue: #0000FF;
+  --cell: clamp(24px, 2vw, 38px);
+  --font: Arial, Helvetica, sans-serif;
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background:#fff;
+  overflow:hidden;
+  font-family:var(--font);
+  cursor:none;
 }
 
-body{
-    background:white;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-    overflow:hidden;
+.site {
+  width:100vw;
+  height:100vh;
+  display:grid;
+  grid-template-columns: repeat(30, var(--cell));
+  grid-template-rows: repeat(24, var(--cell));
+  justify-content:center;
+  align-content:center;
+  background-image:
+    linear-gradient(var(--red) .5px, transparent .5px),
+    linear-gradient(90deg, var(--red) .5px, transparent .5px);
+  background-size: var(--cell) var(--cell);
 }
 
-/* LOGOTYPE */
-
-.site-logo{
-    position:fixed;
-    top:8px;
-    left:50%;
-    transform:translateX(-50%);
-
-    display:grid;
-    grid-auto-flow:column;
-    grid-auto-columns:var(--cell);
-
-    z-index:999;
-
-    text-decoration:none;
+.letter {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--blue);
+  font-size:12px;
+  transform: translate(calc(var(--cell) * -0.5), calc(var(--cell) * -0.5));
+  text-decoration:none;
+  z-index:10;
 }
 
-.site-logo span{
-    width:var(--cell);
-    height:var(--cell);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:16px;
-    font-weight:700;
-
-    color:red:#ff073a;
+.tile, .static-tile {
+  overflow:hidden;
+  position:relative;
 }
 
-.empty{
-    background:transparent;
+.tile img, .static-tile img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(100%);
 }
 
-
-/* GRID */
-
-.grid{
-    display:grid;
-
-    grid-template-columns:repeat(100, var(--cell));
-    grid-template-rows:repeat(100, var(--cell));
-
-    width:calc(30 * var(--cell));
-    height:calc(20 * var(--cell));
-
-    margin:60px auto 0 auto;
-
-    position:relative;
+.tile .overlay {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,7,58,.65);
+  color:white;
+  font-size:13px;
+  letter-spacing:2px;
+  opacity:0;
+  transition:opacity .25s ease;
 }
 
-/* GRID LINES */
-
-.grid::before{
-    content:"";
-    position:absolute;
-    inset:0;
-
-    background-image:
-        linear-gradient(var(--red) 1px, transparent 1px),
-        linear-gradient(90deg, var(--red) 1px, transparent 1px);
-
-    background-size:var(--cell) var(--cell);
-
-    pointer-events:none;
+.tile:hover .overlay {
+  opacity:1;
 }
 
-/* IMAGE BLOCKS */
-
-.tile{
-    position:relative;
-    overflow:hidden;
+.dot {
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  justify-self:center;
+  align-self:center;
 }
 
-.tile img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
+.cursor {
+  position:fixed;
+  width:26px;
+  height:26px;
+  pointer-events:none;
+  z-index:999;
+  transform:translate(-50%,-50%);
+}
+.cursor::before,
+.cursor::after {
+  content:'';
+  position:absolute;
+  background:var(--red);
+  left:50%; top:50%;
+  transform:translate(-50%,-50%);
+}
+.cursor::before { width:20px; height:2px; }
+.cursor::after { width:2px; height:20px; }
+.ring {
+  position:absolute;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--red);
+  left:50%; top:50%;
+  transform:translate(-50%,-50%);
 }
 
-/* FILTER */
-
-.overlay{
-    position:absolute;
-    inset:0;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background:rgba(255,7,58,0);
-
-    opacity:0;
-
-    transition:0.25s ease;
-
-    z-index:2;
+@media (max-width:768px) {
+  :root { --cell: 18px; }
 }
-
-.tile:hover .overlay{
-    background:rgba(255,7,58,0.65);
-    opacity:1;
-}
-
-.overlay span{
-    color:white;
-
-    font-size:30px;
-    font-weight:700;
-
-    text-transform:uppercase;
-    letter-spacing:-1px;
-
-    opacity:0;
-    transition:0.25s ease;
-}
-
-.tile:hover span{
-    opacity:1;
-}
-
-.tile a{
-    position:absolute;
-    inset:0;
-    z-index:3;
-}
-
-
-/* NAV BLOCKS */
-
-.about{
-    grid-column:3 / span 3;
-    grid-row:3 / span 3;
-}
-
-.projects{
-    grid-column:12 / span 5;
-    grid-row:10 / span 5;
-}
-
-.contact{
-    grid-column:18 / span 4;
-    grid-row:4 / span 4;
-}
-
-
-/* PROJECT BLOCKS */
-
-.t1{
-    grid-column:5 / span 5;
-    grid-row:10 / span 5;
-}
-
-.t2{
-    grid-column:23 / span 5;
-    grid-row:11 / span 5;
-}
-
-.t3{
-    grid-column:24 / span 3;
-    grid-row:4 / span 3;
-}
-
-
-/* DOTS */
-
-.dot{
-    position:absolute;
-
-    width:12px;
-    height:12px;
-
-    border-radius:50%;
-
-    transform:translate(-50%, -50%);
-
-    z-index:20;
-}
-
-.red-dot{
-    background:var(--red);
-}
-
-.white-dot{
-    background:white;
-    border:1px solid var(--red);
-}
-
 </style>
 </head>
-
 <body>
+<div class="site" id="site"></div>
+<div class="cursor" id="cursor"><div class="ring"></div></div>
 
-<!-- LOGO -->
+<script>
+const site = document.getElementById('site');
 
-<a href="index.html" class="site-logo">
+function addLetter(char, col, row) {
+  const el = document.createElement('a');
+  el.className = 'letter';
+  el.href = '#';
+  el.textContent = char;
+  el.style.gridColumn = col;
+  el.style.gridRow = row;
+  site.appendChild(el);
+}
 
-    <span>F</span>
-    <span>A</span>
-    <span>X</span>
-    <span>B</span>
-    <span>E</span>
-    <span>R</span>
-    <span>G</span>
+function addTile(label, col, row, w, h, clickable = true) {
+  const el = document.createElement(clickable ? 'a' : 'div');
+  el.className = clickable ? 'tile' : 'static-tile';
+  if (clickable) el.href = '#';
+  el.style.gridColumn = `${col} / span ${w}`;
+  el.style.gridRow = `${row} / span ${h}`;
 
-    <span class="empty"></span>
+  el.innerHTML = `
+    <img src="https://picsum.photos/800/800?random=${Math.random()}" alt="${label}">
+    ${clickable ? `<div class="overlay">${label}</div>` : ''}
+  `;
 
-    <span>A</span>
-    <span>R</span>
-    <span>K</span>
-    <span>I</span>
-    <span>T</span>
-    <span>E</span>
-    <span>K</span>
-    <span>T</span>
-    <span>U</span>
-    <span>R</span>
+  site.appendChild(el);
+}
 
-    <span class="empty"></span>
+function addDot(col, row, outlined=false) {
+  const dot = document.createElement('div');
+  dot.className = 'dot';
+  dot.style.gridColumn = col;
+  dot.style.gridRow = row;
 
-    <span>A</span>
-    <span>B</span>
+  if (outlined) {
+    dot.style.background = 'white';
+    dot.style.border = '1px solid #ff073a';
+  } else {
+    dot.style.background = '#ff073a';
+  }
 
-</a>
+  site.appendChild(dot);
+}
 
+// Logo following exact grid cells
+'faxberg'.split('').forEach((char, i) => addLetter(char, i + 2, 2));
+'rkitektur'.split('').forEach((char, i) => addLetter(char, 3, i + 3));
 
-<!-- GRID -->
+// Interactive blocks
+addTile('ABOUT', 5, 5, 3, 3, true);
+addTile('PROJECTS', 11, 11, 5, 5, true);
+addTile('CONTACT', 18, 7, 4, 4, true);
 
-<div class="grid">
+// Static image blocks
+addTile('', 5, 15, 4, 4, false);
+addTile('', 25, 17, 5, 5, false);
+addTile('', 23, 3, 3, 3, false);
 
-    <!-- NAV -->
+// Grid intersection markers
+addDot(10, 4, false);
+addDot(14, 3, true);
+addDot(8, 10, false);
+addDot(22, 8, true);
+addDot(26, 18, false);
 
-    <div class="tile about">
-        <img src="https://picsum.photos/300?1">
-        <div class="overlay"><span>ABOUT</span></div>
-        <a href="#"></a>
-    </div>
-
-    <div class="tile projects">
-        <img src="https://picsum.photos/500?2">
-        <div class="overlay"><span>PROJECTS</span></div>
-        <a href="#"></a>
-    </div>
-
-    <div class="tile contact">
-        <img src="https://picsum.photos/400?3">
-        <div class="overlay"><span>CONTACT</span></div>
-        <a href="#"></a>
-    </div>
-
-
-    <!-- PROJECTS -->
-
-    <div class="tile t1">
-        <img src="https://picsum.photos/500?4">
-    </div>
-
-    <div class="tile t2">
-        <img src="https://picsum.photos/500?5">
-    </div>
-
-    <div class="tile t3">
-        <img src="https://picsum.photos/300?6">
-    </div>
-
-
-    <!-- DOTS -->
-
-    <div class="dot red-dot" style="left:380px; top:190px;"></div>
-    <div class="dot white-dot" style="left:760px; top:456px;"></div>
-    <div class="dot red-dot" style="left:988px; top:608px;"></div>
-
-</div>
-
+// Cursor
+const cursor = document.getElementById('cursor');
+let tx = window.innerWidth/2;
+let ty = window.innerHeight/2;
+let x = tx;
+let y = ty;
+window.addEventListener('mousemove', e => {
+  tx = e.clientX;
+  ty = e.clientY;
+});
+function animate(){
+  x += (tx-x)*0.18;
+  y += (ty-y)*0.18;
+  cursor.style.left = x + 'px';
+  cursor.style.top = y + 'px';
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
 </body>
 </html>
